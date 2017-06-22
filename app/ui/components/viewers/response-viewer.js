@@ -19,6 +19,10 @@ class ResponseViewer extends PureComponent {
     };
   }
 
+  _handleClick () {
+    this.props.updatePreviewMode(PREVIEW_MODE_RAW);
+  }
+
   _handleOpenLink (link) {
     shell.openExternal(link);
   }
@@ -150,6 +154,23 @@ class ResponseViewer extends PureComponent {
           contentType={`${justContentType}; charset=UTF-8`}
           url={url}
         />
+      );
+    } else if (previewMode === PREVIEW_MODE_FRIENDLY && ct.indexOf('application/pdf') === 0) {
+      const justContentType = contentType.split(';')[0];
+      return (
+        <object
+          className="margin-top-sm"
+          data={`data:${justContentType};base64,${base64Body}`}
+          type={`${justContentType}`}
+          width="300"
+          height="200">
+          Response seems to be a PDF file.<br/>
+            <a
+              className="margin-top-sm btn btn--clicky"
+              href={`data:${justContentType};base64,${base64Body}`}>
+              Save it
+            </a>
+        </object>
       );
     } else if (previewMode === PREVIEW_MODE_RAW) {
       const match = contentType.match(/charset=([\w-]+)/);
